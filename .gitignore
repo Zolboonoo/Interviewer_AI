@@ -1,0 +1,9 @@
+# first time activity
+
+cd .\backend
+python -m venv interviewer_backend
+backend/interviewer_backend
+.\interviewer_backend\Scripts\activate
+
+# second time activity
+

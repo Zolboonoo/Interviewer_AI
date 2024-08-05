@@ -13,14 +13,17 @@
 <body>
   <div class="container">
     <div class="header">
-      in here logo
+      <div class="title-area">
+        <span class="material-symbols-outlined" id="logo">forum</span>
+        <div type="button" class="company-title">Interview with AI</div>
+      </div>
     </div>
-    <div class="chat-container">
+    <div class="chat-container" id="chat-container">
       <!-- Chat area -->
-      <div class="chat-box">
+      <div class="chat-box" id="messages">
         <!-- Messages will appear here -->
       </div>
-      <div class="input-area">
+      <div class="input-area" id="input-container">
         <!-- Voice recording controls -->
         <button class="material-symbols-outlined" style="margin-right: 10px;" id="recordBtn">mic</button>
         <audio id="audioPlayback" style="display:none;" controls></audio>
@@ -28,14 +31,15 @@
           <span id="timer">df</span>
           <div id="recordLoader" class="loader" style="display:none;"></div>
         </p>
-        <textarea id="textInput" placeholder="Type your message..."></textarea>
+        <textarea id="message-input" class="text-area" placeholder="Type your message..."></textarea>
           <!-- <i class="material-icons" id="sendBtn">Publish</i> -->
-          <button class="material-symbols-outlined" id="sendBtn">arrow_upward</button>
+          <button class="material-symbols-outlined" id="send-button">arrow_upward</button>
         </div>
       </div>
     </div>
 
     <script src="./scripts/audioRecord.js"></script>
+    <script src="./scripts/chatController.js"></script>
 </body>
 
 </html>
