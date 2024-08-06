@@ -2,12 +2,18 @@ from fastapi import FastAPI, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from email.message import EmailMessage
+from typing import List, Dict
 import google.generativeai as genai
 import smtplib
 import json
+import time
 import requests
 
 app = FastAPI()
+
+if __name__ == "__main__":
+  import uvicorn
+  uvicorn.run(app, host="localhost", port=8000)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,9 +24,32 @@ app.add_middleware(
 )
 class Message(BaseModel):
     message: str
+    
+class HistoryItem(BaseModel):
+    role: str
+    parts: list[str]
+    
+class ChatData(BaseModel):
+    message: str
+    history: List[Dict[str, str],Dict[str, str]]
+
+# Generate requests test
+@app.post("/GenerateReqTest")
+def send_message_to_python_test(message: ChatData):
+  try:
+    time.sleep(2)
+    response = "this is response"
+    print(message)
+    return {'message': response}
+
+  except Exception as e:
+    # Log the exception to understand the error
+    print(f"Error occurred: {str(e)}")
+    raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.post("/GenerateReq")
-def send_message_to_python(message: Message):
+def send_message_to_python(message: ChatData):
     try:
         genai.configure(api_key="AIzaSyB3r5lNVV0qnt3Jk1sBOpe9a3RBUe3vVHo")
 
@@ -50,7 +79,8 @@ def send_message_to_python(message: Message):
         # See https://ai.google.dev/gemini-api/docs/safety-settings
         )
 
-        chat_session = model.start_chat(history=[])
+        print(message.history)
+        chat_session = model.start_chat(history=message.history)
 
         response = chat_session.send_message(message.message)
         return {'message': response.text}
@@ -64,47 +94,11 @@ def send_message_to_python(message: Message):
 with open('/Users/3031246/Documents/github/javaScript_projects/Daily_Report_Sender/frontend/data.json', 'r') as f:
     smtp_config = json.load(f)
 
-class MailData(BaseModel):
-    emailSubject: str
-    emailBody: str
-    recipientEmail: str
-
-@app.post("/sendMail")
-async def send_mail(mail_data: MailData = Body(...)):
-  try:
-    smtp_host = smtp_config["smtp"]['smtp_host']
-    smtp_port = smtp_config["smtp"]['smtp_port']
-    sender_email = smtp_config["smtp"]['sender_email']
-    sender_password = smtp_config["smtp"]['sender_password']
-
-    # Create the EmailMessage object
-    message = EmailMessage()
-    message['Subject'] = mail_data.emailSubject
-    message['From'] = sender_email
-    message['To'] = mail_data.recipientEmail
-    message.set_content(mail_data.emailBody)
-
-    with smtplib.SMTP(smtp_host, smtp_port) as server:
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.send_message(message)
-        return {"message": "Email sent successfully"}
-
-  except Exception as e:
-    raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
-
-if __name__ == "__main__":
-  import uvicorn
-  uvicorn.run(app, host="localhost", port=8000)
-
-
-
-
 class DateModel(BaseModel):
   message: str
 
 @app.post("/updateDate")
-def send_message_to_python(date: DateModel):
+def update_date_in_json(date: DateModel):
   try:
     data_file = '/Users/3031246/Documents/github/javaScript_projects/Daily_Report_Sender/frontend/data.json'
 
@@ -124,3 +118,6 @@ def send_message_to_python(date: DateModel):
   except Exception as e:
     print(f"Error occurred: {str(e)}")
     raise HTTPException(status_code=500, detail="Internal server error")
+
+
+

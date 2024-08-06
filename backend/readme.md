@@ -22,7 +22,7 @@
    cd backend
 2. **CActivate a virtual environment:**
     ```bash
-    source interviewer_backend/Scripts/activate
+    .\interviewer_backend\Scripts\Activate
 3. **Run the application:**
     ```bash
     uvicorn main:app --reload

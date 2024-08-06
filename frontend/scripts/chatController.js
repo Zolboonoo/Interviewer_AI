@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function addMessage(content) {
     const messageDiv = document.createElement('div');
     messageDiv.textContent = content;
+    messageDiv.id = 'user';
     messageDiv.style.padding = '10px';
     messageDiv.style.borderBottom = '1px solid #ddd';
     messagesContainer.appendChild(messageDiv);
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       messageInput.value = '';
     }
     sendButton.disabled = true;
-    console.log('disabled');
+    // console.log('disabled');
     sendButton.style.backgroundColor = '#676767';
   });
 
@@ -37,10 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleInputChange() {
     if (messageInput.value.trim() === '') {
       sendButton.disabled = true;
-      console.log('disabled');
+      // console.log('disabled');
+      sendButton.style.backgroundColor = '#676767';
     } else {
       sendButton.disabled = false;
-      console.log('enabled');
+      // console.log('enabled');
     }
   }
 
