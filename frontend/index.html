@@ -28,11 +28,16 @@
       <div class="input-area" id="input-container">
         <!-- Voice recording controls -->
         <button class="material-symbols-outlined" style="margin-right: 10px;" id="recordBtn">mic</button>
-        <audio id="audioPlayback" style="display:none;" controls></audio>
-        <p id="recordProgress" style="display: none;">
-          <span id="timer">df</span>
-        <div id="recordLoader" class="loader" style="display:none;"></div>
-        </p>
+        
+        <div id="recordProgress" class="record-area" style="display: none;">
+          <div id="timer" class="record-timer">00</div>
+          <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform>
+          <!-- <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform> -->
+        </div>
+        <div id="controller-area" class="record-area" style="display: none;">
+          <audio id="audioPlayback" controls style="margin-right: 10px;"></audio>
+          <button class="material-symbols-outlined" style="margin-right: 10px;" id="sttBtn">speech_to_text</button>
+        </div>
         <textarea id="message-input" class="text-area" placeholder="Type your message..."></textarea>
         <!-- <i class="material-icons" id="sendBtn">Publish</i> -->
         <button class="material-symbols-outlined" id="send-button">arrow_upward</button>
@@ -40,6 +45,7 @@
     </div>
   </div>
 
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/waveform.js"></script>
   <script src="./scripts/audioRecord.js"></script>
   <script src="./scripts/chatController.js"></script>
   <script src="./scripts/generateReqSender.js"></script>

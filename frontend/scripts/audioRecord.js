@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const recordBtn = document.getElementById('recordBtn');
   const audioPlayback = document.getElementById('audioPlayback');
   const timerElement = document.getElementById('timer');
-  const textInput = document.getElementById('textInput');
+  const textInput = document.getElementById('message-input');
   const recordProgress = document.getElementById('recordProgress');
+  const speechToText = document.getElementById('controller-area');
 
   let mediaRecorder;
   let audioChunks = [];
@@ -21,20 +22,25 @@ document.addEventListener('DOMContentLoaded', () => {
   recordBtn.addEventListener('click', () => {
     if (recordBtn.classList.contains('recording')) {
       mediaRecorder.stop();
+      console.log('Recording stopped');
       recordBtn.classList.remove('recording');
       recordBtn.textContent = 'mic';
-      clearInterval(timerInterval);
       recordProgress.style.display = 'none';
+      clearInterval(timerInterval);
       textInput.style.display = 'block';
-      
+      speechToText.style.display = 'flex';
+
     } else {
       startRecording();
+      console.log('Recording started');
       recordBtn.classList.add('recording');
       recordBtn.textContent = 'play_arrow';
-
       startTime = Date.now();
-      recordProgress.style.display = 'block';
+      timerElement.textContent = 0;
+      recordProgress.style.display = 'flex';
       textInput.style.display = 'none';
+      speechToText.style.display = 'none';
+
       timerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
         timerElement.textContent = elapsed;
@@ -50,10 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
           audioChunks.push(event.data);
         };
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          audioChunks = [];
+          const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+          console.log('Blob size:', audioBlob.size);
           const audioUrl = URL.createObjectURL(audioBlob);
+          console.log('Audio URL:', audioUrl);
           audioPlayback.src = audioUrl;
+          audioChunks = [];
+          console.log(audioPlayback.src);
         };
         mediaRecorder.start();
       })
