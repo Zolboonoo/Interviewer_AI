@@ -1,10 +1,8 @@
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from email.message import EmailMessage
 from typing import List, Dict
 import google.generativeai as genai
-import smtplib
 import json
 import time
 import requests
@@ -31,7 +29,7 @@ class HistoryItem(BaseModel):
     
 class ChatData(BaseModel):
     message: str
-    history: List[Dict[str, str],Dict[str, str]]
+    history: List[Dict[str, str]]
 
 # Generate requests test
 @app.post("/GenerateReqTest")

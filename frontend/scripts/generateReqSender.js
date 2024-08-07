@@ -20,20 +20,6 @@ document.getElementById('send-button').addEventListener('click', async function 
     return history;
   }
   const history = getChatHistory();
-  history = [
-    {
-      "role": "user",
-      "parts": [
-        "こんにちは\n",
-      ],
-    },
-    {
-      "role": "model",
-      "parts": [
-        "こんにちは。本日は面接にお越しいただきありがとうございます。本日は〇〇さんのスキルや経験について詳しくお話を伺いたいと思います。よろしくお願いいたします。\n",
-      ],
-    }
-  ]
 
   // Show loading animation
   sendButton.textContent = 'stop_circle';
