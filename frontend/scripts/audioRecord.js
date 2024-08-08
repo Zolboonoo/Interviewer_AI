@@ -1,16 +1,21 @@
-// script.js
 document.addEventListener('DOMContentLoaded', () => {
   const recordBtn = document.getElementById('recordBtn');
+  const sttBtn = document.getElementById('sttBtn'); // Ensure this button is available
+  const sendButton = document.getElementById('send-button');
   const audioPlayback = document.getElementById('audioPlayback');
   const timerElement = document.getElementById('timer');
   const textInput = document.getElementById('message-input');
   const recordProgress = document.getElementById('recordProgress');
   const speechToText = document.getElementById('controller-area');
+  const sttLoader = document.getElementById('stt-loader');
 
   let mediaRecorder;
   let audioChunks = [];
   let startTime;
   let timerInterval;
+  let audioBlob;
+  let fileName;
+  let dataText;
 
   // Check for browser support
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -56,13 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
           audioChunks.push(event.data);
         };
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+          audioBlob = new Blob(audioChunks, { type: 'audio/wav' }); // Ensure the MIME type is correct
           console.log('Blob size:', audioBlob.size);
           const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('Audio URL:', audioUrl);
           audioPlayback.src = audioUrl;
+
+          // Generate a filename with the current date
+          const now = new Date();
+          const dateString = now.toISOString().replace(/[:.]/g, '-');
+          fileName = `audiofile_${dateString}.wav`;
+
           audioChunks = [];
-          console.log(audioPlayback.src);
         };
         mediaRecorder.start();
       })
@@ -70,4 +79,38 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error accessing media devices.', err);
       });
   }
+
+  sttBtn.addEventListener('click', async () => {
+    if (!audioBlob) {
+      alert('No audio recorded to send.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', audioBlob, fileName);
+    sendButton.disabled = true;
+    sttLoader.style.display = 'flex';
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/SpeechToText', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error! Status: ${response.status}`);
+      }
+
+      dataText = await response.json();
+      console.log('Response:', dataText);
+      textInput.textContent = dataText.message;
+
+    } catch (error) {
+      console.error('Error sending request:', error);
+    } finally {
+      speechToText.style.display = 'none';
+      sendButton.disabled = false;
+      sttLoader.style.display = 'none';
+    }
+  });
 });
