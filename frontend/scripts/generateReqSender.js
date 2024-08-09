@@ -26,7 +26,7 @@ document.getElementById('send-button').addEventListener('click', async function 
   sendButton.disabled = true;
   console.log(sendButton.textContent);
   try {
-    const responce = await fetch(`http://127.0.0.1:8000/GenerateReq`, {
+    const responce = await fetch(`http://127.0.0.1:8000/GenerateReqTest`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -49,12 +49,15 @@ document.getElementById('send-button').addEventListener('click', async function 
 
   //reply to display in screen
   function addMessage(content) {
+    const messageContDiv = document.createElement('div');
     const messageDiv = document.createElement('div');
+    messageContDiv.classList.add('model-message');
+    messageDiv.classList.add('message-style');
     messageDiv.textContent = content;
     messageDiv.id = 'model';
-    messageDiv.style.padding = '10px';
-    messageDiv.style.borderBottom = '1px solid #ddd';
-    messagesContainer.appendChild(messageDiv);
+    messagesContainer.appendChild(messageContDiv);
+    messageContDiv.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
   }
+
 });

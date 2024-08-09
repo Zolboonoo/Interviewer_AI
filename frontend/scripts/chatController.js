@@ -4,12 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const messagesContainer = document.getElementById('messages');
 
   function addMessage(content) {
+    const messageContDiv = document.createElement('div');
     const messageDiv = document.createElement('div');
+    messageContDiv.classList.add('user-message');
+    messageDiv.classList.add('message-style');
     messageDiv.textContent = content;
     messageDiv.id = 'user';
-    messageDiv.style.padding = '10px';
-    messageDiv.style.borderBottom = '1px solid #ddd';
-    messagesContainer.appendChild(messageDiv);
+    messagesContainer.appendChild(messageContDiv);
+    messageContDiv.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
   }
 

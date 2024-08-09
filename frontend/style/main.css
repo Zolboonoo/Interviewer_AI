@@ -81,35 +81,47 @@ button {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
   max-width: 100%;
   /* margin: auto; */
-  padding: 20px;
+  /* padding: 20px; */
   /* border: 1px solid #ddd; */
 
 }
 
+/* area that containning chats */
 .chat-box {
   flex: 1;
   overflow-y: auto;
-  word-wrap: break-word;
-
-  /* max-height: 100%;
-  min-height: 90%; */
-  /* overflow-y: auto; */
-  /* border: 1px solid #ccc; */
+  /* display: flex; */
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  border-color: #f0f0f0;
+  border-width: 1px;
   margin-bottom: 10px;
   padding: 10px;
-  
+  border: 1px solid #ddd;
+}
+
+.input-container{
+  flex: 1;
+  display: flex;
+  position: fixed;
+  width: 100vh;
+  bottom: 90px;
+  /* padding: 10px; */
+  border: 1px solid #ddd;
 }
 
 .input-area {
   display: flex;
-  align-items: center;
+  flex: 1;
+  overflow-y: auto;
+  /* align-items: center; */
   position: fixed;
-  bottom: 0;
   width: 90%;
-
+  height: auto;
   background-color: #2f2f2f;
   padding: 20px;
   border-color: none;
@@ -117,7 +129,7 @@ button {
 }
 
 .record-area {
-  width: 360px;
+  max-width: 360px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -133,6 +145,27 @@ button {
 
 .text-area { 
   color: white;
+  max-height: 52px;
+}
+
+.user-message {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+}
+
+.model-message {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px;
+}
+
+.message-style{
+  padding: 10px 10px;
+  background-color: #2f2f2f;
+  border-radius: 1.5rem;
+  max-width: 70%;
+  text-wrap: wrap;
 }
 
 

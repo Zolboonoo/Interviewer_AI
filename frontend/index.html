@@ -8,8 +8,7 @@
   <title>Interview with AI</title>
   <link rel="stylesheet" href="./style/main.css">
   <link rel="stylesheet" href="./style/additional.css">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 
 <body>
@@ -20,28 +19,32 @@
         <div type="button" class="company-title">Interview with AI</div>
       </div>
     </div>
+
+    <!-- Chat Section -->
     <div class="chat-container" id="chat-container">
       <!-- Chat area -->
       <div class="chat-box" id="messages">
         <!-- Messages will appear here -->
       </div>
-      <div class="input-area" id="input-container">
-        <!-- Voice recording controls -->
-        <button class="material-symbols-outlined" style="margin-right: 10px;" id="recordBtn">mic</button>
-        
-        <div id="recordProgress" class="record-area" style="display: none;">
-          <div id="timer" class="record-timer">00</div>
-          <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform>
-          <!-- <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform> -->
+      <div class="input-container" id="input-container" >
+        <div class="input-area" id="input-area">
+          <!-- Voice recording controls -->
+          <button class="material-symbols-outlined" style="margin-right: 10px;" id="recordBtn">mic</button>
+          
+          <div id="recordProgress" class="record-area" style="display: none;">
+            <div id="timer" class="record-timer">00</div>
+            <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform>
+            <!-- <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform> -->
+          </div>
+          <div id="controller-area" class="record-area" style="display: none;">
+            <audio id="audioPlayback" controls style="margin-right: 10px;"></audio>
+            <button class="material-symbols-outlined" style="margin-right: 10px;" id="sttBtn">speech_to_text</button>
+            <div id="stt-loader" class="loader-spinning" style="display: none;"></div>
+          </div>
+          <textarea id="message-input" class="text-area" placeholder="Type your message..."></textarea>
+          <!-- <i class="material-icons" id="sendBtn">Publish</i> -->
+          <button class="material-symbols-outlined" id="send-button">arrow_upward</button>
         </div>
-        <div id="controller-area" class="record-area" style="display: none;">
-          <audio id="audioPlayback" controls style="margin-right: 10px;"></audio>
-          <button class="material-symbols-outlined" style="margin-right: 10px;" id="sttBtn">speech_to_text</button>
-          <div id="stt-loader" class="loader-spinning" style="display: none;"></div>
-        </div>
-        <textarea id="message-input" class="text-area" placeholder="Type your message..."></textarea>
-        <!-- <i class="material-icons" id="sendBtn">Publish</i> -->
-        <button class="material-symbols-outlined" id="send-button">arrow_upward</button>
       </div>
     </div>
   </div>

@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mediaRecorder.start();
       })
       .catch(err => {
-        console.error('Error accessing media devices.', err);
+        alert('Error accessing media devices.\n Set up your mic!!', err);
+        // console.error('Error accessing media devices.', err);
       });
   }
 
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sttLoader.style.display = 'flex';
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/SpeechToText', {
+      const response = await fetch('http://127.0.0.1:8000/SpeechToTextTest', {
         method: 'POST',
         body: formData
       });

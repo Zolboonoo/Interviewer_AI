@@ -118,11 +118,17 @@ async def upload_file(file: UploadFile = File(...)):
         print(f"Error saving file: {e}")
         return {"error": "Error saving file"}
 
-    # Process the file (e.g., perform speech-to-text)
-    # Here we just return a simulated text
-    text_response = file_location
-
     return {"message": fast_whisper_stt(file_location)}
+
+@app.post("/SpeechToTextTest")
+async def upload_file_test(file: UploadFile = File(...)):
+  try:
+    time.sleep(2)
+    print("Test is successfully:")
+  except OSError as e:
+    print(f"Error saving file: {e}")
+    return {"error": "Error saving file"}
+  return {"message":"STT work is done \n Done!" }
 
 def sanitize_filename(filename: str) -> str:
     # Remove any characters that are not allowed in filenames
