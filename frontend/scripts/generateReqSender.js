@@ -51,10 +51,19 @@ document.getElementById('send-button').addEventListener('click', async function 
   function addMessage(content) {
     const messageContDiv = document.createElement('div');
     const messageDiv = document.createElement('div');
+    const messageIconCont = document.createElement('div');
+    const messageIcon = document.createElement('div');
     messageContDiv.classList.add('model-message');
     messageDiv.classList.add('message-style');
+    messageIconCont.classList.add('icon-style');
+    messageIcon.classList.add('material-symbols-outlined');
     messageDiv.textContent = content;
     messageDiv.id = 'model';
+
+    messageIcon.textContent = 'support_agent';
+
+    messageIconCont.appendChild(messageIcon);
+    messageContDiv.appendChild(messageIconCont);
     messagesContainer.appendChild(messageContDiv);
     messageContDiv.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom

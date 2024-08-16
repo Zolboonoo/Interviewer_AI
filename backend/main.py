@@ -40,7 +40,7 @@ class ChatData(BaseModel):
 @app.post("/GenerateReqTest")
 def send_message_to_python_test(message: ChatData):
   try:
-    time.sleep(2)
+    time.sleep(0.2)
     response = "this is response"
     print(message)
     return {'message': response}

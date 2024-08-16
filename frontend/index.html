@@ -24,13 +24,15 @@
     <div class="chat-container" id="chat-container">
       <!-- Chat area -->
       <div class="chat-box" id="messages">
+        <div id="typingIndicator" class="hidden">
+          <span class="typingIcon">👋</span> <span>Typing...</span>
+        </div>
         <!-- Messages will appear here -->
       </div>
       <div class="input-container" id="input-container" >
         <div class="input-area" id="input-area">
           <!-- Voice recording controls -->
           <button class="material-symbols-outlined" style="margin-right: 10px;" id="recordBtn">mic</button>
-          
           <div id="recordProgress" class="record-area" style="display: none;">
             <div id="timer" class="record-timer">00</div>
             <l-waveform size="35" stroke="3.5" speed="1" color="white"></l-waveform>
@@ -53,6 +55,7 @@
   <script src="./scripts/audioRecord.js"></script>
   <script src="./scripts/chatController.js"></script>
   <script src="./scripts/generateReqSender.js"></script>
+
   </div>
 </body>
 
