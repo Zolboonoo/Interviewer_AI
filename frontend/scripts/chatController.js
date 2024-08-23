@@ -4,17 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const messagesContainer = document.getElementById('messages');
 
   function addSentMessage(content) {
-    const messageContDiv = document.createElement('div');
+    const messageDivCont = document.createElement('div');
     const messageDiv = document.createElement('div');
-    messageContDiv.classList.add('user-message');
+    messageDivCont.classList.add('user-message');
     messageDiv.classList.add('message-style');
     messageDiv.textContent = content;
     messageDiv.id = 'user';
-    messagesContainer.appendChild(messageContDiv);
-    messageContDiv.appendChild(messageDiv);
+    messagesContainer.appendChild(messageDivCont);
+    messageDivCont.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
   }
-
 
   //Click button add message and send to backend server
   sendButton.addEventListener('click', () => {
@@ -24,10 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
       messageInput.value = '';
     }
     sendButton.disabled = true;
-    // console.log('disabled');
     sendButton.style.backgroundColor = '#676767';
 
-    // funciton send to backend request
+    // funciton send to backend text generate request
     generateReqSender()
   });
 
@@ -59,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // when mouse is not hovering btn anymore, then change color back
   sendButton.addEventListener('mouseout', () => {
     if (!sendButton.disabled) {
       sendButton.style.backgroundColor = '#676767';
@@ -75,12 +74,21 @@ async function generateReqSender() {
   const sendButton = document.getElementById('send-button');
 
   // automatically create elements
-  const messageContDiv = document.createElement('div');
+  const messageDivCont = document.createElement('div');
   const messageDiv = document.createElement('div');
   const message = document.createElement('div');
   const messageIconCont = document.createElement('div');
   const messageIcon = document.createElement('div');
 
+    // audio player
+    const audioPlayer = document.createElement('div');
+    const playBtn = document.createElement('div');
+    const generatedAudio = document.createElement('audio');
+    audioPlayer.id = 'audioPlayer';
+    playBtn.id = 'playBtn';
+    generatedAudio.id = 'generatedAudio';
+
+  // get all data showing on screen
   function getChatHistory() {
     const history = [];
     const messageDivs = document.querySelectorAll('#user , #model');
@@ -101,10 +109,9 @@ async function generateReqSender() {
   // Show loading animation
   sendButton.textContent = 'stop';
   sendButton.disabled = true;
-  console.log(sendButton.textContent);
   try {
     addReplyMessage();
-    const responce = await fetch(`http://127.0.0.1:8000/GenerateReqTest`, {
+    const responce = await fetch(`http://127.0.0.1:8000/GenerateReqTextTest`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -117,31 +124,44 @@ async function generateReqSender() {
     const data = await responce.json();
     console.log("Responce", data);
     addResponce(data.message);
+    dataTTS = data.message;
   } catch (e) {
     console.error("Error sending request:", e);
   } finally {
-    // Hide loading animation
+    // when generated text responsed then send request audio
+    generatedAudio.src = generateReqAudio(dataTTS);
+    checkAudioAvailability(generatedAudio.src);
   }
-    sendButton.textContent = 'arrow_upward';    
-
+  sendButton.textContent = 'arrow_upward';
   // until get response from server show loading animation
   function addReplyMessage() {
-    
-    messageContDiv.classList.add('model-message');
+
+    messageDivCont.classList.add('model-message');
     message.classList.add('loader-upndown');
-    messageIconCont.classList.add('icon-style');
-    messageIcon.classList.add('material-symbols-outlined');
     messageDiv.classList.add('message-style');
     messageDiv.id = 'model';
 
+    //icon and audio controls
+    messageIconCont.classList.add('icon-style');
+    messageIcon.classList.add('material-symbols-outlined');
     messageIcon.textContent = 'support_agent';
+    audioPlayer.classList.add('audio-player');
+    audioPlayer.style.display = 'none';
+    audioPlayer.classList.add('material-symbols-outlined');
+    playBtn.classList.add('play-btn');
+    generatedAudio.classList.add('generated-audio');
 
     messageIconCont.appendChild(messageIcon);
-    messageContDiv.appendChild(messageIconCont);
-    messagesContainer.appendChild(messageContDiv);
-    messageContDiv.appendChild(messageDiv);
+    messageDivCont.appendChild(messageIconCont);
+    messagesContainer.appendChild(messageDivCont);
+    messageDivCont.appendChild(messageDiv);
     messageDiv.appendChild(message);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+
+    // Add audio controls makeing child of icon container
+    messageIconCont.appendChild(audioPlayer);
+    audioPlayer.appendChild(playBtn);
+    audioPlayer.appendChild(generatedAudio);
   }
 
   // when response come from server hide loading animation and show response
@@ -150,4 +170,42 @@ async function generateReqSender() {
     message.classList.remove('loader-upndown');
   }
 
+  // URL to check the availability of the audio file
+  // const audioUrl = 'http://127.0.0.1:8000/GenerateReqAudioTest'; // Define your audio URL here
+  // const myAudio = generatedAudio;
+
+  // Show play button when the audio file is available and cursor hovering over
+  function checkAudioAvailability(file){
+    if (file.src) {
+      audioPlayer.style.display = 'flex';
+      playBtn.addEventListener('click', function () {
+        myAudio.play();
+      });
+    } else {
+      // If not available, ensure audioPlayer is hidden
+      audioPlayer.style.display = 'none';
+    }
+  };
 };
+
+
+// Send audio file generate request to server
+async function generateReqAudio(text) {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/GenerateReqAudioTest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // body: JSON.stringify({ text })
+      body: "text"
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.audioUrl; // Assuming the response contains the URL of the generated audio
+  } catch (e) {
+    console.error('Error:', e);
+  }
+}

@@ -19,7 +19,7 @@ body {
 }
 
 button {
-  padding: 2%;
+  padding: 1%;
   color: white;
   border: none;
   border-radius: 50%;
@@ -86,18 +86,16 @@ textarea:focus {
 /* Chat Styles */
 .chat-container {
   display: flex; 
-  flex-direction: column; 
   height: 100%; 
 
-  display: flex;
   flex-direction: column;
   height: 93vh;
-  max-width: 100%;
+  max-width: 95%;
 }
 
 .chat-box {
   overflow: hidden; 
-  flex: 1 1 0%;
+  flex: 1 1 70%;
 }
 
 /* Input Styles */
@@ -105,9 +103,11 @@ textarea:focus {
   display: flex; 
   position: relative; 
   flex-direction: column; 
-  flex: 1 1 0%; 
+  flex:1 1 0%; 
   max-width: 100%; 
-  height: 100%;   
+  height: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .input-area {
@@ -212,4 +212,25 @@ textarea:focus {
   0% { opacity: 1; }
   50% { opacity: 0.5; }
   100% { opacity: 1; }
+}
+
+/* generated audio player designs */
+.audio-player {
+  display: none;
+}
+
+.icon-style:hover .audio-player {
+  display: block;
+}
+
+.play-btn {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.generated-audio {
+  display: none;
 }

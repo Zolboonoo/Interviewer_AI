@@ -2,13 +2,15 @@
 
 ## First-Time Setup
 
+python version range 3.9 <= , < 3.11
+
 1. **Navigate to the backend directory:**
    ```bash
    cd backend
 2. **Create and activate a virtual environment:**
     ```bash
-    python -m venv interviewer_backend
-    source interviewer_backend/Scripts/activate
+    python3.9 -m venv interviewer_backend
+    interviewer_backend/Scripts/activate
 3. **Install dependencies**
    ```bash
    pip install -r requirements.txt

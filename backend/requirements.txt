@@ -1,10 +1,13 @@
-fastapi==0.112.0
-uvicorn==0.30.5
-pydantic==2.0.0
+fastapi==0.112.1
+uvicorn==0.30.6
+pydantic==2.8.2
 google-generativeai==0.7.2  
-requests==2.28.1
+requests==2.32.3
 faster-whisper==1.0.3
 python-multipart==0.0.9
+TTS==0.22.0
+gradio==4.42.0
+TTS[ja]
 
 # pip install google-generativeai
 

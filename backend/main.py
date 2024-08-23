@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from faster_whisper import WhisperModel
 from pydantic import BaseModel
 from typing import List, Dict
@@ -10,7 +11,14 @@ import requests
 import shutil
 import os
 import os.path
+from pathlib import Path
 import re
+
+# sst libraries
+import torch
+from TTS.api import TTS # type: ignore
+import gradio as gr # type: ignore
+
 
 app = FastAPI()
 
@@ -37,10 +45,10 @@ class ChatData(BaseModel):
     history: List[Dict[str, str]]
 
 # Generate requests test
-@app.post("/GenerateReqTest")
+@app.post("/GenerateReqTextTest")
 def send_message_to_python_test(message: ChatData):
   try:
-    time.sleep(20)
+    time.sleep(5)
     response = "this is response"
     print(message)
     return {'message': response}
@@ -51,47 +59,93 @@ def send_message_to_python_test(message: ChatData):
     raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@app.post("/GenerateReq")
+@app.post("/GenerateReqText")
 def send_message_to_python(message: ChatData):
-    try:
-        genai.configure(api_key="AIzaSyB3r5lNVV0qnt3Jk1sBOpe9a3RBUe3vVHo")
+  try:
+    genai.configure(api_key="AIzaSyB3r5lNVV0qnt3Jk1sBOpe9a3RBUe3vVHo")
 
-        generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-        }
+    generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
+    }
 
-        model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config=generation_config,
-        system_instruction="""君は日本人の礼儀がよくわかるボットだ。そしてIT企業の面接官である。僕は今君の担当している開発の案件に参加したいとおもっている。\n
-        そして、君は面接官になりきって僕と会話してください。  \n
-        絶対守るルール：\n
-        **面接終了後、適切なフィードバックを提供する。\n
-        **採用・不採用の理由を明確に伝える。\n
-        聞くべき質問一覧\n
-        **前職ではどのような業務を担当していましたか？\n
-        **特定の技術やツールについての知識を教えてください。(私が言った内容から)\n
-        """,
+    model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    system_instruction="""君は日本人の礼儀がよくわかるボットだ。そしてIT企業の面接官である。僕は今君の担当している開発の案件に参加したいとおもっている。\n
+    そして、君は面接官になりきって僕と会話してください。  \n
+    絶対守るルール：\n
+    **面接終了後、適切なフィードバックを提供する。\n
+    **採用・不採用の理由を明確に伝える。\n
+    聞くべき質問一覧\n
+    **前職ではどのような業務を担当していましたか？\n
+    **特定の技術やツールについての知識を教えてください。(私が言った内容から)\n
+    """,
+
+    # safety_settings = Adjust safety settings
+    # See https://ai.google.dev/gemini-api/docs/safety-settings
+    )
+
+    print(message.history)
+    chat_session = model.start_chat(history=message.history)
+
+    response = chat_session.send_message(message.message)
+    responce_text = response.text
+    return {'message': response.text}
+  
+    # Define the path to save the generated audio file
+    audio_file_path = "static/generated_audio.wav"
+
+    # Generate the audio file
+    generate_audio(text=responce_text, file_path=audio_file_path)
+
+    # Return the URL or file path to the audio file
+    return {"message": responce_text, "audio_url": f"/audio/generated_audio.wav"}
 
 
-        # safety_settings = Adjust safety settings
-        # See https://ai.google.dev/gemini-api/docs/safety-settings
-        )
+  except Exception as e:
+    # Log the exception to understand the error
+    print(f"Error occurred: {str(e)}")
+    raise HTTPException(status_code=500, detail="Internal server error")
 
-        print(message.history)
-        chat_session = model.start_chat(history=message.history)
+# Generate audio file from text
+def generate_audio(text: str, file_path: str):
+  try:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    tts = TTS(model_name="tts_models/ja/kokoro/tacotron2-DDC").to(device)
+    tts.tts_to_file(text=text, file_path=file_path)
+    return Path(file_path)
+  except Exception as e:
+      # Log the exception to understand the error
+      print(f"Error occurred while generating audio: {str(e)}")
+      return None
 
-        response = chat_session.send_message(message.message)
-        return {'message': response.text}
+@app.post('/GenerateReqAudio')
+async def get_audio(message: Message):
+  save_path = Path("generatedData/audio.wav")
+  audio_path =  generate_audio(message,save_path)
+  
+  if audio_path.exists():
+    return FileResponse(audio_path)
+  else:
+    raise HTTPException(status_code=404, detail="File not found")
 
-    except Exception as e:
-        # Log the exception to understand the error
-        print(f"Error occurred: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post('/GenerateReqAudioTest')
+async def get_audio(message: Message):
+  audio_path = Path("generatedData/test.wav")
+  try:
+    if audio_path.exists():
+      return FileResponse(audio_path)
+    else:
+      raise HTTPException(status_code=404, detail="File not found")
+  except Exception as e:
+    # Log the exception to understand the error
+    print(f"Error occurred: {str(e)}")
+    raise HTTPException(status_code=500, detail="Internal server error")
 
 
 UPLOAD_DIRECTORY = "recordData"

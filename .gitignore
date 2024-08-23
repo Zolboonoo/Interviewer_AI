@@ -1,5 +1,5 @@
-backend/interviewer_backend
+backend/interviewer_backend*
 __pycache__
 backend/__pycache__
-# backend/__pycache__/
 recordData/
+generatedData/
