@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   sendButton.addEventListener('click', () => {
     const message = messageInput.value.trim();
     if (message) {
+      // show my chat on screen
       addSentMessage(message);
       messageInput.value = '';
     }
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton.style.backgroundColor = '#676767';
 
     // funciton send to backend text generate request
-    generateReqSender()
+    generateReqSender(message)
   });
 
   messageInput.addEventListener('keydown', (event) => {
@@ -65,10 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  async function generateReqSender() {
-    var writtentext = document.getElementById("message-input").value;
-    const messagesContainer = document.getElementById('messages');
-    const sendButton = document.getElementById('send-button');
+  async function generateReqSender(writtentext) {
+    // var writtentext = document.getElementById("message-input").value;
 
     // automatically create elements
     const messageDivCont = document.createElement('div');
@@ -85,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playBtn.id = 'playBtn';
     generatedAudio.id = 'generatedAudio';
 
-    // get all data showing on screen
+    // get all text in data showing on screen
     function getChatHistory() {
       const history = [];
       const messageDivs = document.querySelectorAll('#user , #model');
@@ -96,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         entry = { role: role, parts: textContent };
         history.push(entry);
-        // entry.parts.push(textContent);
 
       });
       return history;
@@ -112,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // until get response from server show loading animation
       addReplyMessage();
-      const responce = await fetch(`http://127.0.0.1:8000/GenerateReqTextTest`, {
+      const responce = await fetch(`http://127.0.0.1:8000/GenerateReqText`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -129,8 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addResponce(data.message);
       // send request to server make audio sst
       handleAudioRequest(data.message);
-
-
+      console.log("TtT:",data.message);
 
     } catch (e) {
       console.error("Error sending request:", e);
@@ -140,8 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton.textContent = 'arrow_upward';
 
 
-
-
+    // show model chat shape on screen
     function addReplyMessage() {
 
       messageDivCont.classList.add('model-message');
@@ -154,9 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
       messageIcon.classList.add('material-symbols-outlined');
       messageIcon.textContent = 'support_agent';
       audioPlayer.classList.add('audio-player');
-      audioPlayer.style.display = 'none';
+      messageIconCont.cursor = 'pointer';
       audioPlayer.classList.add('material-symbols-outlined');
-      playBtn.classList.add('play-btn');
+      playBtn.classList.add('material-symbols-outlined');
       generatedAudio.classList.add('generated-audio');
 
       messageIconCont.appendChild(messageIcon);
@@ -172,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       audioPlayer.appendChild(generatedAudio);
     }
 
+    // show responded message on screen
     function addResponce(content) {
       message.textContent = content;
       message.classList.remove('loader-upndown');
@@ -183,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (audioUrl) {
         // add audioURL to audio player
+        generatedAudio.controls = true;
         generatedAudio.src = audioUrl;
         messageIconCont.appendChild(audioPlayer);
         checkAudioAvailability(audioUrl);
@@ -190,53 +188,59 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-
-  };
-
-  // if audio element have src then make it playable
-  function checkAudioAvailability(audioElement) {
-    if (audioElement.src) {
+    // mouse over the icon change icon to audio player
+    messageIconCont.addEventListener('mouseover', () => {
       audioPlayer.style.display = 'flex';
-      playBtn.addEventListener('click', function () {
-        audioElement.play().catch(err => console.error('Playback failed:', err));
-      });
-    } else {
+      messageIcon.style.display = 'none';
+      
+      // check audio is loaded if it is show playButton or not waiting icon
+      if (generatedAudio.src) {
+        playBtn.textContent = 'volume_up';
+        playBtn.disabled = false;
+        messageIconCont.cursor = 'pointer';
+        playBtn.style.color = 'white';
+        
+        playBtn.addEventListener('click', function () {
+          generatedAudio.play().catch(err => console.error('Playback failed:', err));
+        });
+      } else {
+        playBtn.textContent = 'hourglass_empty';
+        playBtn.disabled = true;
+        playBtn.style.color = '#676767';
+      }
+    });
+
+    messageIconCont.addEventListener('mouseout', () => {
       audioPlayer.style.display = 'none';
-    }
+      messageIcon.style.display = 'flex';
+    });
+
   };
 
 
   // Send audio file generate request to server
   async function generateReqAudio(text) {
-    const ctx = new AudioContext();
-    let audio;
+    console.log("send TtS:",text);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/GenerateReqAudioTest`, {
+      const response = await fetch(`http://127.0.0.1:8000/GenerateReqAudio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ message: text }),
       })
-      // .then(data => data.arrayBuffer())
-      // .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
-      // .then(decodedAudio => {
-      //   audio = decodedAudio;
-      // });
+      // Check if the response is OK
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Get the response as an ArrayBuffer
+      const arrayBuffer = await response.arrayBuffer();
 
-      const data = response.audio;
-      return data.audioUrl;
+      // Create a Blob from the ArrayBuffer and generate a URL
+      const blob = new Blob([arrayBuffer], { type: 'audio/wav' });
+      const audioUrl = URL.createObjectURL(blob);
 
-      // function playback(){
-      //   const playSound = ctx.createBufferSource();
-      //   playSound.buffer = audio;
-      //   playSound.connect(ctx.destination);
-      //   playSound.start(ctx.currentTime);
-      // }
-
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! Status: ${response.status}`);
-      // }
+      return audioUrl;
 
     } catch (e) {
       console.error('Error ---------:', e);

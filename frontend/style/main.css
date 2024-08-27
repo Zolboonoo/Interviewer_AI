@@ -216,11 +216,12 @@ textarea:focus {
 
 /* generated audio player designs */
 .audio-player {
-  display: none;
+  display: flex;
 }
 
 .icon-style:hover .audio-player {
   display: block;
+  cursor: pointer;
 }
 
 .play-btn {
