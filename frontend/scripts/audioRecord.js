@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sttLoader.style.display = 'flex';
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/SpeechToTextTest', {
+      const response = await fetch('http://127.0.0.1:8000/SpeechToText', {
         method: 'POST',
         body: formData
       });
@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       speechToText.style.display = 'none';
       sendButton.disabled = false;
       sttLoader.style.display = 'none';
+      textInput.textContent = dataText.message;
     }
   });
 });

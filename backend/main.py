@@ -1,3 +1,13 @@
+# Standard Library Imports
+import json
+import os
+import os.path
+import re
+import shutil
+import time
+from pathlib import Path
+
+# Third-Party Imports
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -5,14 +15,7 @@ from faster_whisper import WhisperModel
 from pydantic import BaseModel
 from typing import List, Dict
 import google.generativeai as genai
-import json
-import time
 import requests
-import shutil
-import os
-import os.path
-from pathlib import Path
-import re
 
 # sst libraries
 import torch
@@ -62,7 +65,7 @@ def send_message_to_python_test(message: ChatData):
 @app.post("/GenerateReqText")
 def send_message_to_python(message: ChatData):
   try:
-    genai.configure(api_key="AIzaSyB3r5lNVV0qnt3Jk1sBOpe9a3RBUe3vVHo")
+    genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
     generation_config = {
     "temperature": 1,
@@ -196,7 +199,10 @@ def sanitize_filename(filename: str) -> str:
 
 
 def fast_whisper_stt(filename: str) -> str:
+  # if you want to use your gpu memory instead of cpu change below line 
+  # model = WhisperModel('medium', device="cuda", compute_type="float16") 
   model = WhisperModel('medium', device="cpu", compute_type="int8")
+  
   segments, info = model.transcribe(filename, beam_size=5, language="ja", condition_on_previous_text=False)
 
   seg = []

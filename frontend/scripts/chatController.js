@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
       addResponce(data.message);
       // send request to server make audio sst
       handleAudioRequest(data.message);
-      console.log("TtT:",data.message);
 
     } catch (e) {
       console.error("Error sending request:", e);
@@ -183,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         generatedAudio.controls = true;
         generatedAudio.src = audioUrl;
         messageIconCont.appendChild(audioPlayer);
-        checkAudioAvailability(audioUrl);
         return audioUrl;
       }
     }
@@ -220,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Send audio file generate request to server
   async function generateReqAudio(text) {
-    console.log("send TtS:",text);
     try {
       const response = await fetch(`http://127.0.0.1:8000/GenerateReqAudio`, {
         method: 'POST',
