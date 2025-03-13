@@ -9,7 +9,7 @@
   This project uses the GenAI API. Before running the project, set up the API key by executing the following command in your terminal:
 
    ```bash
-   $env:GOOGLE_API_KEY = "your_api_key" # if your using os system use this instead --> export GENAI_API_KEY="AIzaSyB3r5lNVV0qnt3Jk1sBOpe9a3RBUe3vVHo"
+   $env:GOOGLE_API_KEY = "your_api_key"
 
 3. **Model Usage**
   The project utilizes STT, TTS, and text-to-text LLM models. If you have an NVIDIA GPU, the models will run on your GPU, which will be faster. Otherwise, the models will run on your CPU.
